@@ -1,0 +1,129 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.0/mapbox-gl-directions.css" type="text/css">
+    <link href="https://api.mapbox.com/search-js/v1.0.0-beta.21/search.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div id="main-content">
+        <div id="sidebar">
+            <h2>Plan Your Route</h2>
+            <form id="route-form">
+                           <div id="stationLabel">Petrol Stations</div>
+
+    
+    <div class="search-group">
+    <div id="start-search-box" style="width: 45%; display: inline-block;"></div>
+    <div id="end-search-box" style="width: 45%; display: inline-block;"></div>
+</div>
+
+    <div id="filters">
+        <div class="filter-group">
+            <label>Brands:</label>
+            <!-- Petrol Station Brands -->
+            <div class="button-group" id="petrol-brands">
+                <button type="button" class="filter-btn brand-btn active" data-brand="all">All</button>
+                <button type="button" class="filter-btn brand-btn" data-brand="Applegreen">Applegreen</button>
+                <button type="button" class="filter-btn brand-btn" data-brand="Asda">Asda</button>
+                <button type="button" class="filter-btn brand-btn" data-brand="BP">BP</button>
+                <button type="button" class="filter-btn brand-btn" data-brand="Esso">Esso</button>
+                <button type="button" class="filter-btn brand-btn" data-brand="Jet">Jet</button>
+                <button type="button" class="filter-btn brand-btn" data-brand="Morrisons">Morrisons</button>
+                <button type="button" class="filter-btn brand-btn" data-brand="Sainsbury's">Sainsbury's</button>
+                <button type="button" class="filter-btn brand-btn" data-brand="Shell">Shell</button>
+                <button type="button" class="filter-btn brand-btn" data-brand="Texaco">Texaco</button>
+            </div>
+
+            <!-- EV Station Brands -->
+            <div class="button-group" id="ev-brands" style="display: none;">
+                <button type="button" class="filter-btn brand-btn active" data-brand="all">All</button>
+                <button type="button" class="filter-btn brand-btn" data-brand="BP Pulse">BP Pulse</button>
+                <button type="button" class="filter-btn brand-btn" data-brand="Pod Point">Pod Point</button>
+                <button type="button" class="filter-btn brand-btn" data-brand="Tesla">Tesla</button>
+                <button type="button" class="filter-btn brand-btn" data-brand="InstaVolt">InstaVolt</button>
+                <button type="button" class="filter-btn brand-btn" data-brand="Ionity">Ionity</button>
+                <button type="button" class="filter-btn brand-btn" data-brand="Gridserve">Gridserve</button>
+                <button type="button" class="filter-btn brand-btn" data-brand="ChargePoint">ChargePoint</button>
+                <button type="button" class="filter-btn brand-btn" data-brand="ospreycharging">Osprey</button>
+            </div>
+        </div>
+
+        
+        <div class="filter-group">
+            <label>Type:</label>
+            <!-- Petrol Fuel Types -->
+            <div class="button-group" id="petrol-types">
+                <button type="button" class="filter-btn fuel-btn active" data-fuel-type="all">All</button>
+                <button type="button" class="filter-btn fuel-btn" data-fuel-type="E10">E10</button>
+                <button type="button" class="filter-btn fuel-btn" data-fuel-type="E5">E5</button>
+                <button type="button" class="filter-btn fuel-btn" data-fuel-type="B7">B7</button>
+            </div>
+
+            <!-- EV Connection Types -->
+            <div class="button-group" id="ev-types" style="display: none;">
+                <button type="button" class="filter-btn connection-btn active" data-connection="all">All</button>
+                <button type="button" class="filter-btn connection-btn" data-connection="CCS (Type 2)">CCS</button>
+                <button type="button" class="filter-btn connection-btn" data-connection="Type 2">Type 2</button>
+                <button type="button" class="filter-btn connection-btn" data-connection="CHAdeMO">CHAdeMO</button>
+                <button type="button" class="filter-btn connection-btn" data-connection="Type 1">Type 1</button>
+            </div>
+        </div>
+    </div>
+    <button type="submit" id="routeButton">Filter</button>
+</form>
+            <div class="loading" id="loading">Calculating the best route for you...</div>
+            <div id="route-info"></div>
+        </div>
+
+        <div id="map-container">
+            <div id="map"></div>
+            <div id="station-toggle" style="position: absolute; top: 10px; right: 10px;">
+                <div class="toggle-container">
+                    <label class="switch">
+                        <input type="checkbox" id="station-type-selector"/>
+                        <div class="oval"></div>
+                        <div class="circle"></div>
+                        <span class="icon petrol-icon">⛽</span> <!-- Petrol icon -->
+                        <span class="icon ev-icon">🌿</span>    <!-- EV icon -->
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Pass the access token to the JavaScript
+        const mapboxAccessToken = '{{ mapboxAccessToken }}';
+    </script>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {# Third-party libraries first #}
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.js"></script>
+    <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.0/mapbox-gl-directions.js"></script>
+    <script src='https://unpkg.com/@turf/turf@6/turf.min.js'></script>
+    <script src='https://unpkg.com/@mapbox/polyline@1.1.1/src/polyline.js'></script>
+    <script src="https://api.mapbox.com/search-js/v1.0.0-beta.21/search.js"></script>
+    
+    {# Utils first #}
+    <script src="{{ asset('js/utils/RouteUtils.js') }}"></script>
+    <script src="{{ asset('js/utils/MarkerUtils.js') }}"></script>
+    <script src="{{ asset('js/utils/PopupUtils.js') }}"></script>
+    
+    {# Managers second #}
+    <script src="{{ asset('js/managers/FilterManager.js') }}"></script>
+    <script src="{{ asset('js/managers/LoadingManager.js') }}"></script>
+    <script src="{{ asset('js/managers/MarkerManager.js') }}"></script>
+    <script src="{{ asset('js/managers/StationManager.js') }}"></script>
+    
+    {# Main application classes #}
+    <script src="{{ asset('js/StationMap.js') }}"></script>
+    
+    {# Initialization last #}
+    <script src="{{ asset('js/main.js') }}"></script>
+{% endblock %}
+
