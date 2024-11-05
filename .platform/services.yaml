@@ -1,4 +1,4 @@
-# .platform/services.yaml
+# services.yaml
 mysql:
-    type: mysql:10.4
-    disk: 1024
+  type: mysql:8.0
+  disk: 512
