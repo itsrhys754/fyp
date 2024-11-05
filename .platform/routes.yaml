@@ -1,6 +1,5 @@
-"https://{default}/":
+# .platform/routes.yaml
+"http://{default}/":
     type: upstream
-    upstream: "app:http"
-    cache:
-        enabled: true
-        cookies: ['*']
+    # the first part should be your project name
+    upstream: 'routewise:php'

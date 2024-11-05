@@ -1,10 +1,10 @@
 # .platform.app.yaml
-name: app
+name: routewise
 type: 'php:8.3'
 
 # Relationships section
 relationships:
-  database: 'database:mysql'
+  database: 'mysql:mysql'
   
 # Additional settings for the application
 build:
@@ -12,7 +12,7 @@ build:
 
 # Hook for any build-time actions (optional)
 hooks:
-  build: |s
+  build: |ss
     set -e
     composer install --no-dev --optimize-autoloader
     composer dump-env prod
