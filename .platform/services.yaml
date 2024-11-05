@@ -2,4 +2,3 @@
 mysql:
   type: mysql:8.0
   disk: 512
-  port: 3306
