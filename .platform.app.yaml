@@ -4,7 +4,7 @@ type: 'php:8.3'
 
 # Relationships section
 relationships:
-  mysql: 'mysql:mysql'
+  database: 'database:mysql'
   
 # Additional settings for the application
 build:
@@ -12,6 +12,27 @@ build:
 
 # Hook for any build-time actions (optional)
 hooks:
-  build: |
-    echo "Running build steps..."
+  build: |s
+    set -e
     composer install --no-dev --optimize-autoloader
+    composer dump-env prod
+    bin/console cache:clear
+    bin/console assets:install --no-debug
+  deploy: |
+    set -e
+    bin/console doctrine:migrations:migrate --no-interaction
+
+# Web settings
+web:
+  locations:
+    "/":
+      root: "public"
+      expires: 1h
+      passthru: "/index.php"
+
+# Disk settings
+disk: 512
+
+# Mounts settings
+mounts:
+  "/var": { source: local, source_path: var }

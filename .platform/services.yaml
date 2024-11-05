@@ -1,4 +1,4 @@
 # services.yaml
-mysql:
-  type: mysql:8.0
-  disk: 512
+database:
+    type: mysql:8.0
+    disk: 512
